@@ -163,6 +163,9 @@ Index.getInitialProps = async ({ ctx, reduxStore }) => {
 
     // const result = await api.request({ url: '/search/repositories?q=react' }, ctx.req, ctx.res)
 
+    console.log('-----------------')
+    console.log(isServer)
+
     const user = reduxStore.getState().user
 
     if (!user || !user.id) {

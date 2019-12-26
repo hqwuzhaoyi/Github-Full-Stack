@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node server.js",
     "build": "next build",
     "start": "next start",
+    "export": "next export",
     "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build"
   },
   "homepage": "https://hqwuzhaoyi.github.io/Github-Full-Stack",
