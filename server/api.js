@@ -4,6 +4,7 @@ const { requestGitHub } = require('../lib/api')
 
 const github_base_url = 'https://api.github.com'
 
+
 module.exports = server => {
     server.use(async (ctx, next) => {
         const path = ctx.path
