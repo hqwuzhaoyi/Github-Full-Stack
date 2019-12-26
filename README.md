@@ -23,8 +23,35 @@ sudo systemctl start redis
 ```
 sudo systemctl enable redis
 ```
-# PM2
+# 安装nginx
+## nginx配置
+```
+vi /etc/nginx/conf.d/next.conf
+
+//next.conf
+server {
+        listen          80;
+        listen          [::]:80;
+        server_name     prajna.xyz;
+
+        location / {
+                proxy_pass http://localhost:3000;
+                proxy_set_header Host $host:$server_port;
+        }
+}
+```
+
+## nginx 重启
+service reload nginx
+# 启动
+```
+ cp config.sample.js config.js
+ 
+```
+
+# PM2 持续启动
 ```
 pm2 start ecosystem.config.js
 pm2 list
 ```
+
