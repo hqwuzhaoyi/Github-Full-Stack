@@ -23,3 +23,8 @@ sudo systemctl start redis
 ```
 sudo systemctl enable redis
 ```
+# PM2
+```
+pm2 start ecosystem.config.js
+pm2 list
+```
