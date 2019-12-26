@@ -3,6 +3,7 @@
 # Github-Full-Stack
 本项目使用React Hook+Next.js+Koa2 来搭建一个github的简单版本,数据来源Github OAUTH,包括仓库展示,搜索,Issues和readme的展示
 
+![oauth](https://wuzhaoyi.oss-cn-shanghai.aliyuncs.com/imgs/OAUTH%20%282%29.jpg)
 
 # 需要安装redis
 ## centos安装
