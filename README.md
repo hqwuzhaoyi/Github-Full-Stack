@@ -1,3 +1,5 @@
+在线地址预览  http://prajna.xyz/
+
 # Github-Full-Stack
 本项目使用React Hook+Next.js+Koa2 来搭建一个github的简单版本,包括仓库展示,搜索,Issues和readme的展示
 
