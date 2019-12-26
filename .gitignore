@@ -14,6 +14,7 @@
 
 # production
 /build
+config.js
 
 # misc
 .DS_Store
@@ -24,4 +25,3 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-config.js
