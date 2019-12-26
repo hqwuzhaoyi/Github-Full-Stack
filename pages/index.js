@@ -1,88 +1,201 @@
-import React from 'react'
-import Head from 'next/head'
-import Nav from '../components/nav'
+import { Button, Icon } from 'antd'
+import getConfig from 'next/config'
+import { connect } from 'react-redux'
+import { useEffect } from 'react'
+import Router, { withRouter } from 'next/router'
+import LRU from 'lru-cache'
 
-const Home = () => (
-  <div>
-    <Head>
-      <title>Home</title>
-      <link rel="icon" href="/favicon.ico" />
-    </Head>
+import { Tabs } from 'antd'
 
-    <Nav />
+import Repo from '../components/Repo'
+import { cacheArray  } from '../lib/repo-basic-cache'
 
-    <div className="hero">
-      <h1 className="title">Welcome to Next.js!</h1>
-      <p className="description">
-        To get started, edit <code>pages/index.js</code> and save to reload.
-      </p>
+// import axios from 'axios'
 
-      <div className="row">
-        <a href="https://nextjs.org/docs" className="card">
-          <h3>Documentation &rarr;</h3>
-          <p>Learn more about Next.js in the documentation.</p>
-        </a>
-        <a href="https://nextjs.org/learn" className="card">
-          <h3>Next.js Learn &rarr;</h3>
-          <p>Learn about Next.js by following an interactive tutorial!</p>
-        </a>
-        <a
-          href="https://github.com/zeit/next.js/tree/master/examples"
-          className="card"
-        >
-          <h3>Examples &rarr;</h3>
-          <p>Find other example boilerplates on the Next.js GitHub.</p>
-        </a>
-      </div>
-    </div>
+const cache = new LRU({
+    maxAge: 1000 * 60 * 10
+})
 
-    <style jsx>{`
-      .hero {
-        width: 100%;
-        color: #333;
-      }
-      .title {
-        margin: 0;
-        width: 100%;
-        padding-top: 80px;
-        line-height: 1.15;
-        font-size: 48px;
-      }
-      .title,
-      .description {
-        text-align: center;
-      }
-      .row {
-        max-width: 880px;
-        margin: 80px auto 40px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-      }
-      .card {
-        padding: 18px 18px 24px;
-        width: 220px;
-        text-align: left;
-        text-decoration: none;
-        color: #434343;
-        border: 1px solid #9b9b9b;
-      }
-      .card:hover {
-        border-color: #067df7;
-      }
-      .card h3 {
-        margin: 0;
-        color: #067df7;
-        font-size: 18px;
-      }
-      .card p {
-        margin: 0;
-        padding: 12px 0 0;
-        font-size: 13px;
-        color: #333;
-      }
-    `}</style>
-  </div>
-)
+const api = require('../lib/api')
+const { publicRuntimeConfig } = getConfig()
 
-export default Home
+let cachedUserRepos, cachedUserStaredRepos;
+
+const Index = ({ userRepos, userStaredRepos, user, router }) => {
+    // console.log(userRepos, userStaredRepos)
+
+    const tabKey = router.query.key || '1'
+
+    const handleTabChange = (activeKey) => {
+        Router.push(`/?key=${activeKey}`)
+    }
+
+    useEffect(() => {
+
+        if (!isServer) {
+            // cachedUserRepos = userRepos;
+            
+            // cachedUserStaredRepos = userStaredRepos;    
+            if (userRepos) {
+                cache.set('userRepos', userRepos)
+            }
+            if (userStaredRepos) {
+                cache.set('userStaredRepos', userStaredRepos)
+            }
+        }
+
+    }, [userRepos, userStaredRepos])
+
+    useEffect(() => {
+        if(!isServer) {
+            cacheArray(userRepos)
+            cacheArray(userStaredRepos)
+            // console.log(cacheArray)
+        }
+    })
+    
+    if (!user || !user.id) {
+        return (
+            <div className="root">
+                <p>亲,您还没有登录</p>
+                <Button type="primary" href={publicRuntimeConfig.OAUTH_URL}>点击登录</Button>
+                <style jsx>{`
+                    .root {
+                        height: 400px;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                `}</style>
+            </div>
+        )
+    }
+
+
+    return (
+        <div className="root">
+            <div className="user-info">
+                <img src={user.avatar_url} alt="user avatar" className="avatar"></img>
+                <span className="login">{user.login}</span>
+                <span className="name">{user.name}</span>
+                <span className="bio">{user.bio}</span>
+                <p className="email">
+                    <Icon type="mail" style={{ marginRight: 10 }} ></Icon>
+                    <a href={`mailto:${user.email}`}>{user.email}</a>
+                </p>
+
+
+            </div>
+
+            <div className="user-repos">
+                {/* {
+                    userRepos.map(repo => (
+                        <Repo repo={repo} />
+                    ))
+                } */}
+
+                <Tabs activeKey={tabKey} onChange={handleTabChange} animated={false} >
+                    <Tabs.TabPane tab="你的仓库" key="1">
+                        {
+                            userRepos.map(repo => (
+                                <Repo repo={repo} key={repo.id} />
+                            ))
+                        }
+                    </Tabs.TabPane>
+                    <Tabs.TabPane tab="你关注的仓库" key="2">
+                        {
+                            userStaredRepos.map(repo => (
+                                <Repo repo={repo} key={repo.id} />
+                            ))
+                        }
+                    </Tabs.TabPane>
+                </Tabs>
+            </div>
+
+
+            <style jsx>
+                {`
+     .root {
+         display: flex;
+         align-items: flex-start;
+         padding: 20px 0;
+     }
+     .user-info {
+         width: 200px;
+         margin-right: 40px;
+         flex-shark: 0;
+         display: flex;
+         flex-direction: column;
+     }
+     .login {
+         font-weight: 800;
+         font-size: 20px;
+         margin-top: 20px;
+     }
+     .name {
+         font-size: 16px;
+         color: #777;
+     }
+     .bio {
+         margin-top: 20px;
+         color: #333;
+     }
+     .avatar {
+         width: 100%;
+         border-radius: 5px;
+     }
+     .user-repos {
+         flex-grow: 1;
+     }
+                `}
+            </style>
+        </div>
+    )
+}
+
+const isServer = typeof window === 'undefined'
+
+Index.getInitialProps = async ({ ctx, reduxStore }) => {
+    // const result = await axios
+    //     .get('/github/search/repositories?q=react')
+    //     .then(resp => console.log(resp))
+
+    // const result = await api.request({ url: '/search/repositories?q=react' }, ctx.req, ctx.res)
+
+    const user = reduxStore.getState().user
+
+    if (!user || !user.id) {
+        return {
+            isLogin: false
+        }
+    }
+    if (!isServer) {
+        if (cache.get('userRepos') && cache.get('userStaredRepos')) {
+            return {
+                userRepos: cache.get('userRepos'),
+                userStaredRepos: cache.get('userStaredRepos')
+            }
+        }
+    }
+
+    const userRepos = await api.request({ url: '/user/repos' }, ctx.req, ctx.res)
+
+    const userStaredRepos = await api.request({
+        url: '/user/starred'
+    }, ctx.req, ctx.res)
+
+    return {
+        isLogin: true,
+        // data: result.data
+        userRepos: userRepos.data,
+        userStaredRepos: userStaredRepos.data
+    }
+
+}
+
+export default withRouter(connect(function mapState(state) {
+    return {
+        user: state.user
+    }
+})(Index))
