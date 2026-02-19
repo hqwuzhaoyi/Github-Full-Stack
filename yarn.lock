@@ -2208,7 +2208,7 @@ crypto-browserify@^3.11.0:
     create-hmac "^1.1.0"
     diffie-hellman "^5.0.0"
     inherits "^2.0.1"
-    pbkdf2 "^3.0.3"
+    pbkdf2 "^3.1.5"
     public-encrypt "^4.0.0"
     randombytes "^2.0.0"
     randomfill "^1.0.3"
@@ -4747,7 +4747,7 @@ parse-asn1@^5.0.0:
     browserify-aes "^1.0.0"
     create-hash "^1.1.0"
     evp_bytestokey "^1.0.0"
-    pbkdf2 "^3.0.3"
+    pbkdf2 "^3.1.5"
     safe-buffer "^5.1.1"
 
 parse-json@^2.2.0:
@@ -4851,7 +4851,7 @@ path-type@^2.0.0:
   dependencies:
     pify "^2.0.0"
 
-pbkdf2@^3.0.3:
+pbkdf2@^3.1.5:
   version "3.0.17"
   resolved "https://registry.yarnpkg.com/pbkdf2/-/pbkdf2-3.0.17.tgz#976c206530617b14ebb32114239f7b09336e93a6"
   integrity sha512-U/il5MsrZp7mGg3mSQfn742na2T+1/vHDCG5/iTI3X9MKUuYUZVLQhyRsg06mCgDBTd57TxzgZt7P+fYfjRLtA==
